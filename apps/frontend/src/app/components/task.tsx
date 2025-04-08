@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { TaskType } from "@/types/task";
@@ -29,6 +30,9 @@ export function Task({
         >
           {task.title}
         </label>
+        {task.categories.map((category) => (
+          <Badge key={category.name}>{category.name}</Badge>
+        ))}
       </div>
       <Button
         variant="ghost"

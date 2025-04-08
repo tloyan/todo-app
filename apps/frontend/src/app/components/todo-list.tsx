@@ -23,6 +23,7 @@ export default function TodoList({ remoteTasks }: { remoteTasks: TaskType[] }) {
   const handleAddTask = async (values: {
     title: string;
     description?: string | undefined;
+    categories?: string[];
   }) => {
     try {
       const task = await TaskApi.add(values);

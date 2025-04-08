@@ -2,9 +2,12 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Category } from './category.entity';
 
 @Entity()
 export class Task {
@@ -19,6 +22,10 @@ export class Task {
 
   @Column()
   status: 'OPEN' | 'DONE';
+
+  @ManyToMany(() => Category, (category) => category.tasks, { cascade: true })
+  @JoinTable()
+  categories: Category[];
 
   @CreateDateColumn()
   created_at: Date;

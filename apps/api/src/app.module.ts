@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { TasksModule } from './tasks/tasks.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Task } from './tasks/entities/task.entity';
+import { Category } from './tasks/entities/category.entity';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { Task } from './tasks/entities/task.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_DATABASE,
-      entities: [Task],
+      entities: [Task, Category],
       synchronize: true,
     }),
     TasksModule,
@@ -22,4 +23,4 @@ import { Task } from './tasks/entities/task.entity';
   controllers: [],
   providers: [],
 })
-export class AppModule { }
+export class AppModule {}

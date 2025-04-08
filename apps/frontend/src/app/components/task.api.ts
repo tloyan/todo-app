@@ -4,6 +4,7 @@ export class TaskApi {
   static async add(values: {
     title: string;
     description?: string | undefined;
+    categories?: string[];
   }) {
     const response = await fetch("http://localhost:4000/tasks", {
       method: "POST",

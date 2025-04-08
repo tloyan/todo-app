@@ -13,10 +13,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { z } from "zod";
+import { TagInput } from "./tag-input";
 
 const formSchema = z.object({
   title: z.string().max(50),
   description: z.string().max(500).optional(),
+  categories: z.array(z.string().min(1).max(12)).optional(),
 });
 
 const AddTaskForm = ({
@@ -48,6 +50,26 @@ const AddTaskForm = ({
             </FormItem>
           )}
         />
+        <FormField
+          control={form.control}
+          name="categories"
+          render={() => (
+            <FormItem>
+              <FormLabel>Categories</FormLabel>
+              <FormControl>
+                <TagInput
+                  placeholder="Add tags..."
+                  onTagsChange={(categories) =>
+                    form.setValue("categories", categories)
+                  }
+                />
+              </FormControl>
+              <FormDescription>This is your task name</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
         <FormField
           control={form.control}
           name="description"

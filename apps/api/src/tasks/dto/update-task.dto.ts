@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsIn, IsOptional, IsString } from 'class-validator';
 
 export class UpdateTaskDto {
   @IsOptional()
@@ -13,4 +13,9 @@ export class UpdateTaskDto {
   @IsString()
   @IsIn(['OPEN', 'DONE'])
   status: 'OPEN' | 'DONE';
+
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  categories: string[];
 }
