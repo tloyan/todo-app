@@ -3,79 +3,64 @@
 import { AddTaskForm } from "@/components/forms/add-task";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import {
   Dialog,
   DialogContent,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Task } from "@/types/task";
-import { Trash } from "lucide-react";
-import { useState } from "react";
+import { TaskType } from "@/types/task";
+import { useReducer, useState } from "react";
+import { tasksReducer } from "./task.reducer";
+import { Task } from "./task";
+import { TaskApi } from "./task.api";
 
-export default function TodoList({ remoteTasks }: { remoteTasks: Task[] }) {
-  const [tasks, setTasks] = useState(remoteTasks);
+export default function TodoList({ remoteTasks }: { remoteTasks: TaskType[] }) {
+  const [tasks, dispatch] = useReducer(tasksReducer, remoteTasks);
   const [open, setOpen] = useState(false);
 
-  const addTask = async (values: {
+  const handleAddTask = async (values: {
     title: string;
     description?: string | undefined;
   }) => {
     try {
-      const response = await fetch("http://localhost:4000/tasks", {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ ...values }),
-      });
-
-      const task = await response.json();
+      const task = await TaskApi.add(values);
+      dispatch({ type: "add", payload: { ...task } });
       setOpen(false);
-      setTasks([...tasks, task]);
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
     }
   };
 
-  const toggleTaskCompletion = async (task: Task) => {
+  const handleToggleTaskCompletion = async (task: TaskType) => {
     const newStatus = task.status === "DONE" ? "OPEN" : "DONE";
-    console.log(task.status);
-    console.log(newStatus);
     try {
-      const response = await fetch(`http://localhost:4000/tasks/${task.id}`, {
-        method: "PATCH",
-        headers: {
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-
-      if (!response.ok) {
-        throw new Error();
-      }
-
-      setTasks(
-        tasks.map((t) =>
-          t.id === task.id ? { ...task, status: newStatus } : t
-        )
-      );
+      const updated_task = await TaskApi.update(task.id, { status: newStatus });
+      dispatch({ type: "update", payload: { ...updated_task } });
     } catch (error) {
       console.error(error);
     }
   };
 
-  const removeTask = async (id: string) => {
+  const handleRemoveTask = async (id: string) => {
     try {
-      await fetch(`http://localhost:4000/tasks/${id}`, {
-        method: "DELETE",
-      });
-      setTasks(tasks.filter((task) => task.id !== id));
+      await TaskApi.delete(id);
+      dispatch({ type: "delete", payload: { id } });
     } catch (error) {
       console.error(error);
     }
   };
+
+  const openTasks = tasks
+    .filter((t) => t.status === "OPEN")
+    // @ts-expect-error right and side must be blablabla
+    .sort((a, b) => a.id - b.id);
+
+  const doneTasks = tasks
+    .filter((t) => t.status === "DONE")
+    // @ts-expect-error right and side must be blablabla
+    .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
   return (
     <Card className="w-full max-w-md ml-3">
@@ -92,7 +77,7 @@ export default function TodoList({ remoteTasks }: { remoteTasks: Task[] }) {
             </DialogTrigger>
             <DialogContent>
               <DialogTitle>Add new Task</DialogTitle>
-              <AddTaskForm onSubmit={addTask} />
+              <AddTaskForm onSubmit={handleAddTask} />
             </DialogContent>
           </Dialog>
         </div>
@@ -103,34 +88,24 @@ export default function TodoList({ remoteTasks }: { remoteTasks: Task[] }) {
               No tasks yet. Add one above!
             </p>
           ) : (
-            tasks.map((task) => (
-              <div
-                key={task.id}
-                className="flex items-center justify-between p-3 rounded-lg border"
-              >
-                <div className="flex items-center space-x-2">
-                  <Checkbox
-                    id={`task-${task.id}`}
-                    checked={task.status === "DONE"}
-                    onCheckedChange={() => toggleTaskCompletion(task)}
-                  />
-                  <label
-                    htmlFor={`task-${task.id}`}
-                    className={`font-medium ${task.status === "DONE" ? "line-through text-muted-foreground" : ""}`}
-                  >
-                    {task.title}
-                  </label>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => removeTask(task.id)}
-                  aria-label="Remove task"
-                >
-                  <Trash className="h-4 w-4" />
-                </Button>
-              </div>
-            ))
+            <>
+              {openTasks.map((task: TaskType) => (
+                <Task
+                  key={task.id}
+                  task={task}
+                  handleToggleTaskCompletion={handleToggleTaskCompletion}
+                  handleRemoveTask={handleRemoveTask}
+                />
+              ))}
+              {doneTasks.map((task: TaskType) => (
+                <Task
+                  key={task.id}
+                  task={task}
+                  handleToggleTaskCompletion={handleToggleTaskCompletion}
+                  handleRemoveTask={handleRemoveTask}
+                />
+              ))}
+            </>
           )}
         </div>
       </CardContent>
