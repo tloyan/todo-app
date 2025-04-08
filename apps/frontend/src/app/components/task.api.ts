@@ -10,7 +10,7 @@ export class TaskApi {
       headers: {
         "content-type": "application/json",
       },
-      body: JSON.stringify({ ...values, title: false }),
+      body: JSON.stringify({ ...values }),
     });
 
     return await response.json();
