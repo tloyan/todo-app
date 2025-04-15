@@ -34,6 +34,14 @@ export class TasksService {
     return task;
   }
 
+  async findAllCategories() {
+    return await this.categoryRepository.find({
+      order: {
+        name: 'asc',
+      },
+    });
+  }
+
   async create(createTaskDto: CreateTaskDto) {
     const categories =
       createTaskDto.categories &&

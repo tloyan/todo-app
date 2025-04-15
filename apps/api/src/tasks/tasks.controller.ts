@@ -20,6 +20,11 @@ export class TasksController {
     return this.tasksService.findAll();
   }
 
+  @Get('categories')
+  findAllCategories() {
+    return this.tasksService.findAllCategories();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.tasksService.findOne(+id);
