@@ -1,4 +1,4 @@
-import { TaskType } from "@/types/task";
+import { TaskType } from "./task";
 
 export type TaskAction =
   | { type: "add"; payload: TaskType }

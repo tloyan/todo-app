@@ -9,6 +9,6 @@ export class Category {
   @Column()
   name: string;
 
-  @ManyToMany(() => Task)
+  @ManyToMany(() => Task, (task) => task.categories)
   tasks: Task[];
 }

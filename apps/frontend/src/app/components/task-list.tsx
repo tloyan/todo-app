@@ -1,5 +1,5 @@
 "use client";
-import { TaskType } from "@/types/task";
+import { TaskType } from "@/app/components/types/task";
 import { TaskItem } from "./task-item";
 import { TaskApi } from "./task.api";
 import { ActionDispatch } from "react";

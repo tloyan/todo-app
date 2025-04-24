@@ -27,6 +27,12 @@ export class Task {
   @JoinTable()
   categories: Category[];
 
+  @Column({ nullable: true })
+  priority: 'low' | 'medium' | 'high';
+
+  @Column({ nullable: true })
+  due_date: Date;
+
   @CreateDateColumn()
   created_at: Date;
 

@@ -9,8 +9,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { sortOptions } from "../task-page";
-import { AddTaskForm } from "@/components/forms/add-task";
+import { priorityOptions, sortOptions } from "../task-page";
+import { CreateTaskForm } from "@/app/components/forms/create-task.form";
 import {
   Dialog,
   DialogTrigger,
@@ -31,6 +31,8 @@ export default function TaskListHeader({
   setSelectedCategory,
   sortBy,
   setSortBy,
+  selectedPriority,
+  setSelectedPriority,
 }: {
   categories: string[];
   dispatch: ActionDispatch<[action: TaskAction]>;
@@ -40,6 +42,8 @@ export default function TaskListHeader({
   setSelectedCategory: (s: string) => void;
   sortBy: { label: string; value: string };
   setSortBy: (s: { label: string; value: string }) => void;
+  selectedPriority: { label: string; value: string };
+  setSelectedPriority: (s: { label: string; value: string }) => void;
 }) {
   const [open, setOpen] = useState(false);
 
@@ -47,6 +51,7 @@ export default function TaskListHeader({
     title: string;
     description?: string | undefined;
     categories?: string[];
+    priority?: "low" | "medium" | "high";
   }) => {
     try {
       const task = await TaskApi.add(values);
@@ -66,7 +71,7 @@ export default function TaskListHeader({
           </DialogTrigger>
           <DialogContent>
             <DialogTitle>Add new Task</DialogTitle>
-            <AddTaskForm onSubmit={handleAddTask} />
+            <CreateTaskForm onSubmit={handleAddTask} />
           </DialogContent>
         </Dialog>
       </div>
@@ -102,6 +107,34 @@ export default function TaskListHeader({
               >
                 {category}
                 {selectedCategory === category && (
+                  <Check className="ml-auto h-4 w-4" />
+                )}
+              </DropdownMenuItem>
+            ))}
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+
+      {/* Priority filter */}
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="outline"
+            className="w-full sm:w-auto justify-between"
+          >
+            Priority: {selectedPriority.label}
+            <ChevronDown className="ml-2 h-4 w-4" />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-[200px]">
+          <DropdownMenuGroup>
+            {priorityOptions.map((priority) => (
+              <DropdownMenuItem
+                key={priority.value}
+                onClick={() => setSelectedPriority(priority)}
+              >
+                {priority.label}
+                {selectedPriority.value === priority.value && (
                   <Check className="ml-auto h-4 w-4" />
                 )}
               </DropdownMenuItem>

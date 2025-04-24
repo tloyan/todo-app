@@ -1,10 +1,11 @@
-import { TaskType } from "@/types/task";
+import { TaskType } from "@/app/components/task";
 
 export class TaskApi {
   static async add(values: {
     title: string;
     description?: string | undefined;
     categories?: string[];
+    priority?: "low" | "medium" | "high";
   }) {
     const response = await fetch("http://localhost:4000/tasks", {
       method: "POST",
@@ -13,6 +14,10 @@ export class TaskApi {
       },
       body: JSON.stringify({ ...values }),
     });
+
+    if (!response.ok) {
+      throw new Error();
+    }
 
     return await response.json();
   }
@@ -34,8 +39,10 @@ export class TaskApi {
   }
 
   static async delete(id: string) {
-    await fetch(`http://localhost:4000/tasks/${id}`, {
+    const response = await fetch(`http://localhost:4000/tasks/${id}`, {
       method: "DELETE",
     });
+
+    console.log(await response.json());
   }
 }

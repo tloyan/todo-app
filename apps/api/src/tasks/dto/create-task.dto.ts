@@ -1,4 +1,10 @@
-import { IsArray, IsOptional, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsDateString,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateTaskDto {
   @IsString()
@@ -12,4 +18,12 @@ export class CreateTaskDto {
   @IsArray()
   @IsString({ each: true })
   categories?: string[];
+
+  @IsOptional()
+  @IsEnum(['low', 'medium', 'high'])
+  priority?: 'low' | 'medium' | 'high';
+
+  @IsOptional()
+  @IsDateString()
+  due_date?: Date;
 }

@@ -1,8 +1,9 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { TaskType } from "@/types/task";
+import { TaskType } from "@/app/components/task";
 import { Trash } from "lucide-react";
+import { getPriorityColor } from "../utils/priority-color";
 
 export function TaskItem({
   task,
@@ -13,8 +14,6 @@ export function TaskItem({
   handleToggleTaskCompletion: (task: TaskType) => void;
   handleRemoveTask: (id: string) => void;
 }) {
-  // task.priority = "Low";
-  // task.dueDate = Date.now();
   return (
     <>
       <div
@@ -35,23 +34,23 @@ export function TaskItem({
               {task.title}
             </label>
             <div className="flex flex-wrap gap-2 mt-2">
-              {task.categories.map((category) => (
+              {task.categories?.map((category) => (
                 <Badge key={category.name} variant="secondary">
                   {category.name}
                 </Badge>
               ))}
-              {/* {task.priority && (
+              {task.priority && (
                 <Badge
                   className={getPriorityColor(task.priority) + " text-white"}
                 >
                   {task.priority}
                 </Badge>
               )}
-              {task.dueDate && (
+              {task.due_date && (
                 <span className="text-sm text-muted-foreground">
-                  Due: {new Date(task.dueDate).toLocaleDateString()}
+                  Due: {new Date(task.due_date).toLocaleDateString()}
                 </span>
-              )} */}
+              )}
             </div>
           </div>
           <div className="ml-auto">
@@ -76,17 +75,3 @@ export function TaskItem({
     </>
   );
 }
-
-// Get priority badge color
-// const getPriorityColor = (priority: string) => {
-//   switch (priority) {
-//     case "High":
-//       return "bg-red-500";
-//     case "Medium":
-//       return "bg-yellow-500";
-//     case "Low":
-//       return "bg-green-500";
-//     default:
-//       return "bg-gray-500";
-//   }
-// };
